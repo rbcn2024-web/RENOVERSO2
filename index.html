@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nexo Gaudiniano - Rafael VR Edition (RECUPERADO)</title>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.controls.min.js"></script>
+    <script>
+      // SCRIPT DE JUGABILIDAD: PINCEL DE BOLITAS CUÁNTICAS (3D)
+      AFRAME.registerComponent('pincel-esferas', {
+        init: function () {
+          this.pintando = false;
+          // Eventos para el gatillo de las Quest 2
+          this.el.addEventListener('triggerdown', () => { this.pintando = true; });
+          this.el.addEventListener('triggerup', () => { this.pintando = false; });
+        },
+        tick: function () {
+          if (!this.pintando) return;
+          
+          let bola = document.createElement('a-sphere');
+          let pos = new THREE.Vector3();
+          // Cogemos la posición exacta de la punta del mando
+          this.el.object3D.getWorldPosition(pos);
+          
+          bola.setAttribute('position', pos);
+          bola.setAttribute('radius', '0.04');
+          bola.setAttribute('color', '#00FFFF');
+          bola.setAttribute('material', 'emissive: #00FFFF; emissiveIntensity: 2');
+          
+          this.el.sceneEl.appendChild(bola);
+        }
+      });
+
+      // COMPONENTE PARA EL SALTO ENTRE MUNDOS
+      AFRAME.registerComponent('portal-link', {
+        schema: { url: {type: 'string'} },
+        init: function () {
+          this.el.addEventListener('click', () => {
+            window.location.href = this.data.url;
+          });
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene renderer="colorManagement: true;">
+      
+      <a-assets>
+        <img id="pisoTex" src="https://cdn.aframe.io/a-painter/images/floor.jpg">
+      <a-asset-item id="rascacielos" src="rascacielos.glb"></a-asset-item>
+</a-assets>
+      <a-sky color="#0A244D"></a-sky>
+
+      <a-plane static-body
+               position="0 -0.5 0" 
+               rotation="-90 0 0" 
+               width="200" 
+               height="200" 
+               color="#111"
+               material="src: #pisoTex; repeat: 100 100; roughness: 0.8"
+               >
+      </a-plane>
+
+      <a-entity id="rig" movement-controls="fly: false; speed: 0.2">
+        <a-entity camera position="0 1.6 0" look-controls></a-entity>
+        <a-entity laser-controls="hand: right" pincel-esferas raycaster="objects: .clickable; far: 5"></a-entity>
+        <a-entity laser-controls="hand: left" raycaster="objects: .clickable; far: 5"></a-entity>
+      </a-entity>
+<a-entity gltf-model="#rascacielos" 
+          position="0 -0.5 +60" 
+          rotation="0 0 0" 
+          scale="1 1 1">
+</a-entity>
+      <a-entity light="type: ambient; color: #FFF; intensity: 0.2"></a-entity>
+      <a-entity light="type: spotlight; color: #FFF; intensity: 1; angle: 60" position="0 20 -10"></a-entity>
+      
+      <a-entity position="-3 1 -15" light="type: point; color: #FF1493; intensity: 1; distance: 10">
+        <a-cylinder radius="0.1" height="2" color="#111"></a-cylinder>
+        <a-sphere position="0 1 0" radius="0.2" color="#FF1493" material="emissive: #FF1493; emissiveIntensity: 1"></a-sphere>
+      </a-entity>
+      <a-entity position="3 1 -15" light="type: point; color: #FF1493; intensity: 1; distance: 10">
+        <a-cylinder radius="0.1" height="2" color="#111"></a-cylinder>
+        <a-sphere position="0 1 0" radius="0.2" color="#FF1493" material="emissive: #FF1493; emissiveIntensity: 1"></a-sphere>
+      </a-entity>
+      <a-entity position="-3 1 -25" light="type: point; color: #FF1493; intensity: 1; distance: 10">
+        <a-cylinder radius="0.1" height="2" color="#111"></a-cylinder>
+        <a-sphere position="0 1 0" radius="0.2" color="#FF1493" material="emissive: #FF1493; emissiveIntensity: 1"></a-sphere>
+      </a-entity>
+      <a-entity position="3 1 -25" light="type: point; color: #FF1493; intensity: 1; distance: 10">
+        <a-cylinder radius="0.1" height="2" color="#111"></a-cylinder>
+        <a-sphere position="0 1 0" radius="0.2" color="#FF1493" material="emissive: #FF1493; emissiveIntensity: 1"></a-sphere>
+      </a-entity>
+      
+      <a-entity position="0 25 -100">
+        <a-torus-knot radius="40" radius-tubular="3" p="2" q="3" color="#111" 
+                      material="wireframe: true; emissive: #00FFFF; emissiveIntensity: 1; opacity: 0.8; transparent: true"
+                      animation="property: rotation; to: 0 360 0; loop: true; dur: 30000; easing: linear">
+        </a-torus-knot>
+      </a-entity>
+      <a-entity position="80 25 -30" rotation="0 90 0">
+        <a-torus-knot radius="40" radius-tubular="3" p="3" q="2" color="#111" 
+                      material="wireframe: true; emissive: #FF1493; emissiveIntensity: 1; opacity: 0.8; transparent: true"
+                      animation="property: rotation; to: 0 -360 0; loop: true; dur: 30000; easing: linear">
+        </a-torus-knot>
+      </a-entity>
+      <a-entity position="-80 25 -30" rotation="0 -90 0">
+        <a-torus-knot radius="40" radius-tubular="3" p="3" q="2" color="#111" 
+                      material="wireframe: true; emissive: #FF1493; emissiveIntensity: 1; opacity: 0.8; transparent: true"
+                      animation="property: rotation; to: 0 360 0; loop: true; dur: 30000; easing: linear">
+        </a-torus-knot>
+      </a-entity>
+      
+      <a-octahedron position="0 2 -30" radius="3" color="#888" 
+                    material="wireframe: true; wireframeLinewidth: 1; emissive: #FFF; emissiveIntensity: 1"
+                    animation="property: rotation; to: 360 360 360; loop: true; dur: 10000; easing: linear">
+      </a-octahedron>
+
+      <a-entity position="-4 1.5 -8" rotation="0 30 0">
+        <a-torus radius="1" radius-tubular="0.03" color="#FF1493" animation="property: rotation; to: 0 0 360; loop: true; dur: 4000"></a-torus>
+        <a-circle class="clickable" radius="0.9" color="#000" opacity="0.9" material="shader: flat"
+                  portal-link="url: https://TU-USUARIO.github.io/HUB/">
+          <a-text value="VOLVER" align="center" position="0 0 0.1" width="3" color="#FFF"></a-text>
+        </a-circle>
+      </a-entity>
+
+      <a-entity position="4 1.5 -8" rotation="0 -30 0">
+        <a-torus radius="1" radius-tubular="0.03" color="#00FFFF" animation="property: rotation; to: 0 0 360; loop: true; dur: 4000"></a-torus>
+        <a-circle class="clickable" radius="0.9" color="#000" opacity="0.9" material="shader: flat"
+                  portal-link="url: https://TU-USUARIO.github.io/SIGUIENTE/">
+          <a-text value="SIGUIENTE" align="center" position="0 0 0.1" width="3" color="#FFF"></a-text>
+        </a-circle>
+      </a-entity>
+
+      <a-text id="instrucciones" value="GATILLO DERECHO PARA SEMBRAR ESTRELLAS" position="0 4.5 -5" align="center" color="#00FFFF" width="5"></a-text>
+
+    </a-scene>
+  </body>
+</html>
